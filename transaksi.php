@@ -1,5 +1,6 @@
 <?php
 session_start();
+$conn = mysqli_connect('localhost', 'root', '', 'db_mik3_penjualan');
 ?>
 
 <!DOCTYPE html>
@@ -10,7 +11,7 @@ session_start();
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta name="description" content="Aplikasi Menegement Sales">
    <meta name="author" content="M. Iqbal Adenan">
-   <title>Aplikasi Management Sales | Produk</title>
+   <title>Aplikasi Management Sales | Transactions</title>
    <!-- Bootstrap CSS -->
    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
    <!-- Tabler Icons CSS -->
@@ -73,12 +74,12 @@ session_start();
                      </a>
                   </li>
                   <li class="nav-item">
-                     <a href="produk.php" class="nav-link text-nowrap me-3 active">
+                     <a href="produk.php" class="nav-link text-nowrap me-3">
                         <i class="ti ti-cube-spark align-text-top me-1"></i> Products
                      </a>
                   </li>
                   <li class="nav-item">
-                     <a href="transaksi.php" class="nav-link text-nowrap me-3">
+                     <a href="transaksi.php" class="nav-link text-nowrap me-3 active">
                         <i class="ti ti-shopping-cart align-text-top me-1"></i> Transactions
                      </a>
                   </li>
@@ -107,7 +108,7 @@ session_start();
             <div class="d-flex flex-column flex-lg-row mb-2">
                <!-- Page Title -->
                <div class="flex-grow-1">
-                  <h5 class="page-title">Products</h5>
+                  <h5 class="page-title">Transactions</h5>
                </div>
                <div class="pt-lg-1">
                   <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -118,7 +119,7 @@ session_start();
                            </a>
                         </li>
                         <li class="breadcrumb-item" aria-current="page">
-                           Products
+                           Transactions
                         </li>
                      </ol>
                   </nav>
@@ -128,10 +129,64 @@ session_start();
             <div class="bg-white rounded-2 shadow-sm p-4 mb-4">
                <div class="row">
                   <div class="d-grid d-lg-block col-lg-5 col-xl-6 mb-4 mb-lg-0">
-                     <!-- button form add data -->
-                     <a href="produk-baru.php" class="btn btn-dark py-2 px-3">
-                        <i class="ti ti-plus me-2"></i> Add Product
-                     </a>
+                     <!-- button modal add transaksi -->
+                     <button type="button" data-bs-toggle="modal" data-bs-target="#modalTambah" class="btn btn-dark py-2 px-3">
+                        <i class="ti ti-plus me-2"></i> Add Transactions
+                     </button>
+                     <!-- form modal add transaksi -->
+                     <div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="modalTambahLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                           <div class="modal-content">
+                              <div class="modal-header">
+                                 <h5 class="modal-title" id="modalTambahLabel">
+                                    <i class="ti ti-shopping-cart me-2"></i> Add Transaction
+                                 </h5>
+                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <form action="insert_transaksi.php" method="post">
+                                 <div class="modal-body">
+                                    <div class="mb-3">
+                                       <label for="tanggal" class="form-label">Date</label>
+                                       <input type="date" class="form-control" id="tanggal" name="tanggal" required>
+                                    </div>
+                                    <div class="mb-3">
+                                       <label for="pelanggan" class="form-label">Customer</label>
+                                       <select name="pelanggan" id="pelanggan" class="form-select" required>
+                                          <option value="" disabled selected>Choose Customer</option>
+                                          <?php
+                                          $query = $conn->query("SELECT * FROM pelanggan");
+                                          foreach ($query as $data) :
+                                          ?>
+                                             <option value="<?= $data['id_pelanggan']; ?>"><?= $data['nama_pelanggan']; ?></option>
+                                          <?php endforeach; ?>
+                                       </select>
+                                    </div>
+                                    <div class="mb-3">
+                                       <label for="produk" class="form-label">Product</label>
+                                       <select name="produk" id="produk" class="form-select" required>
+                                          <option value="" disabled selected>Choose Product</option>
+                                          <?php
+                                          $query = $conn->query("SELECT * FROM produk");
+                                          foreach ($query as $data) :
+                                          ?>
+                                             <option value="<?= $data['id_produk']; ?>"><?= $data['nama_produk'] . " - Rp " . $data['harga']; ?></option>
+                                          <?php endforeach; ?>
+                                       </select>
+                                    </div>
+                                    <div class="mb-3">
+                                       <label for="jumlah" class="form-label">Quantity</label>
+                                       <input type="number" class="form-control" id="jumlah" name="jumlah" required placeholder="Enter Quantity">
+                                    </div>
+                                 </div>
+                                 <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary py-2 px-3" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-dark py-2 px-3"> Submit </button>
+                                 </div>
+                              </form>
+                           </div>
+                        </div>
+                     </div>
+
                   </div>
                   <div class="col-lg-7 col-xl-6">
                      <!-- form pencarian -->
@@ -150,14 +205,17 @@ session_start();
                   <table class="table table-bordered table-striped table-hover" style="width:100%">
                      <thead>
                         <th class="text-center">No.</th>
+                        <th class="text-center">Date</th>
+                        <th class="text-center">Customer Name</th>
                         <th class="text-center">Product Name</th>
                         <th class="text-center">Price</th>
-                        <th class="text-center">Stok</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-center">Total</th>
                         <th class="text-center">Actions</th>
                      </thead>
                      <tbody>
                         <?php
-                        $conn = mysqli_connect('localhost', 'root', '', 'db_mik3_penjualan');
+
                         // Jumlah data per halaman
                         $limit = 5;
 
@@ -175,10 +233,10 @@ session_start();
                         $search_clean = htmlspecialchars($search, ENT_QUOTES, 'UTF-8');
 
                         // Tambahkan kondisi pencarian jika ada
-                        $search_condition = $search ? "WHERE nama_produk LIKE '%$search_clean%'" : "";
+                        $search_condition = $search ? "WHERE nama_produk LIKE '%$search_clean%' OR nama_pelanggan LIKE '%$search_clean%'" : "";
 
                         // Hitung total hasil
-                        $total_results_query = "SELECT COUNT(*) AS total FROM produk $search_condition";
+                        $total_results_query = "SELECT COUNT(*) AS total FROM transaksi $search_condition";
                         $total_results_result = $conn->query($total_results_query);
                         $total_results = $total_results_result->fetch_assoc()['total'];
 
@@ -186,29 +244,33 @@ session_start();
                         $total_pages = ceil($total_results / $limit);
 
                         // Query data dengan limit dan offset
-                        $query = "SELECT * FROM produk $search_condition LIMIT $limit OFFSET $offset";
+                        $query = "SELECT * FROM transaksi INNER JOIN produk ON transaksi.produk_id = produk.id_produk INNER JOIN pelanggan ON transaksi.pelanggan_id = pelanggan.id_pelanggan $search_condition LIMIT $limit OFFSET $offset";
                         $result = $conn->query($query);
 
                         $no = 1;
                         foreach ($result as $data) :
+                           $total = $data['harga'] * $data['jumlah'];
                         ?>
                            <tr>
                               <td width="30" class="text-center"><?= $no++ ?></td>
+                              <td width="100"><?= $data['tanggal'] ?></td>
+                              <td width="150"><?= $data['nama_pelanggan'] ?></td>
                               <td width="200"><?= $data['nama_produk'] ?></td>
-                              <td class="text-center" width="150"><?= $data['harga'] ?></td>
-                              <td class="text-center" width="50"><?= $data['stok'] ?></td>
+                              <td class="text-center" width="150">Rp <?= number_format($data['harga'], 0, ',', '.') ?></td>
+                              <td class="text-center" width="50"><?= $data['jumlah'] ?></td>
+                              <td class="text-center" width="150">Rp <?= number_format($total, 0, ',', '.') ?></td>
                               <td width="70" class="text-center">
-                                 <a href="edit_produk.php?id=<?= $data['id_produk'] ?>" class="btn btn-primary btn-sm m-1" data-bs-tooltip="tooltip" data-bs-title="Edit">
+                                 <a href="edit_produk.php?id=<?= $data['id_transaksi'] ?>" class="btn btn-primary btn-sm m-1" data-bs-tooltip="tooltip" data-bs-title="Edit">
                                     <i class="ti ti-edit"></i>
                                  </a>
                                  <!-- button modal hapus data -->
-                                 <button type="button" class="btn btn-danger btn-sm m-1" data-bs-toggle="modal" data-bs-target="#modalHapus<?= $data['id_produk'] ?>" data-bs-tooltip="tooltip" data-bs-title="Delete">
+                                 <button type="button" class="btn btn-danger btn-sm m-1" data-bs-toggle="modal" data-bs-target="#modalHapus<?= $data['id_transaksi'] ?>" data-bs-tooltip="tooltip" data-bs-title="Delete">
                                     <i class="ti ti-trash"></i>
                                  </button>
                               </td>
                            </tr>
                            <!-- Modal hapus data -->
-                           <div class="modal fade" id="modalHapus<?= $data['id_produk'] ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+                           <div class="modal fade" id="modalHapus<?= $data['id_transaksi'] ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalDeleteLabel" aria-hidden="true">
                               <div class="modal-dialog">
                                  <div class="modal-content">
                                     <div class="modal-header">
