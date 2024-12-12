@@ -20,6 +20,8 @@ $conn = mysqli_connect('localhost', 'root', '', 'db_mik3_penjualan');
    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
    <!-- Sweetalert -->
    <link rel="stylesheet" href="assets/sweetalert2/sweetalert2.min.css">
+   <!-- Select2 -->
+   <link rel="stylesheet" href="assets/select2/css/select2.min.css">
    <!-- jQuery -->
    <script src="assets/js/jquery-3.7.1.min.js"></script>
    <!-- My Style -->
@@ -151,7 +153,7 @@ $conn = mysqli_connect('localhost', 'root', '', 'db_mik3_penjualan');
                                     </div>
                                     <div class="mb-3">
                                        <label for="pelanggan" class="form-label">Customer</label>
-                                       <select name="pelanggan" id="pelanggan" class="form-select" required>
+                                       <select name="pelanggan" id="pelanggan" class="select2-single" required>
                                           <option value="" disabled selected>Choose Customer</option>
                                           <?php
                                           $query = $conn->query("SELECT * FROM pelanggan");
@@ -163,7 +165,7 @@ $conn = mysqli_connect('localhost', 'root', '', 'db_mik3_penjualan');
                                     </div>
                                     <div class="mb-3">
                                        <label for="produk" class="form-label">Product</label>
-                                       <select name="produk" id="produk" class="form-select" required>
+                                       <select name="produk" id="produk" class="select2-single" required>
                                           <option value="" disabled selected>Choose Product</option>
                                           <?php
                                           $query = $conn->query("SELECT * FROM produk");
@@ -358,6 +360,24 @@ $conn = mysqli_connect('localhost', 'root', '', 'db_mik3_penjualan');
    <script src="assets/js/bootstrap.bundle.min.js"></script>
    <!-- Sweetalert JS -->
    <script src="assets/sweetalert2/sweetalert2.all.min.js"></script>
+   <!-- Select2 JS -->
+   <script src="assets/select2/js/select2.min.js"></script>
+   <script>
+      // select2
+      $('.select2-single').each(function() {
+         $(this).select2({
+            // fix select2 search input focus bug
+            dropdownParent: $(this).parent(),
+         })
+      })
+
+      // fix select2 bootstrap modal scroll bug
+      $(document).on('select2:close', '.select2-single', function(e) {
+         var evt = "scroll.select2"
+         $(e.target).parents().off(evt)
+         $(window).off(evt)
+      })
+   </script>
    <!-- Notifications -->
    <?php if (isset($_SESSION['success'])) { ?>
       <script>
