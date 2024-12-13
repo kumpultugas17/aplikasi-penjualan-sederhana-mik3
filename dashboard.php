@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['users'])) {
+   header('location: login.php');
+   exit();
+}
 $conn = mysqli_connect('localhost', 'root', '', 'db_mik3_penjualan');
 ?>
 
@@ -48,10 +52,17 @@ $conn = mysqli_connect('localhost', 'root', '', 'db_mik3_penjualan');
       <!-- Navbar Top -->
       <nav class="navbar navbar-top fixed-top bg-dark text-white">
          <div class="container">
-            <a href="#" class="d-inline navbar-brand text-white">
-               <img src="assets/images/logo-dashboard.png" alt="Logo" width="32" class="align-text-bottom me-2">
-               <span class="fs-4 text-uppercase">Apliaksi Management Sales</span>
-            </a>
+            <div class="me-auto">
+               <a href="#" class="d-inline navbar-brand text-white">
+                  <img src="assets/images/logo-dashboard.png" alt="Logo" width="32" class="align-text-bottom me-2">
+                  <span class="fs-4 text-uppercase">Apliaksi Management Sales</span>
+               </a>
+            </div>
+            <div class="d-flex nav-item">
+               <div class="text-nowrap">
+                  <i class="ti ti-user me-1"></i> M. Iqbal Adenan
+               </div>
+            </div>
          </div>
       </nav>
       <!-- Navbar Menu -->

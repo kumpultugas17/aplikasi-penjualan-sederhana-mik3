@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['users'])) {
+   header('location: login.php');
+   exit();
+}
 $conn = mysqli_connect('localhost', 'root', '', 'db_mik3_penjualan');
 ?>
 
